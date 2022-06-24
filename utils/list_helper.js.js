@@ -30,18 +30,36 @@ const favouriteBlog = (blogs) => {
 //   return (prev.y > current.y) ? prev : current
 // })
 
+// a function that receives an array of blogs as a parameter and returns the author who has the largest amount of blogs. 
 const mostBlogs = (blogs) => {
     if (blogs.length === 0) {
         return null;
     }
-
+    // creates and object with {index: author} pairs 
     const authors = _.mapValues(blogs, "author");
-
+    console.log(authors);
     const authorWithMostBlogs = _(authors).countBy().entries().maxBy(_.last);
     console.log(authorWithMostBlogs);
 
     return { author: authorWithMostBlogs[0], blogs: authorWithMostBlogs[1] };
 };
+
+// a function called mostLikes that receives an array of blogs as its parameter and returns the author, whose blog posts have the largest amount of likes. 
+// If there are many top bloggers, then it is enough to show any one of them.
+
+const mostLikes = (blogs) => {
+    if (blogs.length === 0) {
+        return null;
+    }
+    // creates and object with {index: author} pairs 
+    const authors = _.mapValues(blogs, "author");
+    console.log(authors);
+    const authorWithMostBlogs = _(authors).countBy().entries().maxBy(_.last);
+    console.log(authorWithMostBlogs);
+
+    return { author: authorWithMostBlogs[0], blogs: authorWithMostBlogs[1] };
+};
+
 
 module.exports = {
     dummy,
