@@ -7,7 +7,11 @@ const middleware = require("./utils/middleware");
 const logger = require("./utils/logger");
 const mongoose = require("mongoose");
 
+// const mongoUrl = process.env.NODE_ENV === 'test'
+//   ? process.env.TEST_MONGODB_URI
+//   : process.env.MONGODB_URI
 const mongoUrl = config.MONGODB_URI;
+
 mongoose
     .connect(mongoUrl)
     .then(() => {
