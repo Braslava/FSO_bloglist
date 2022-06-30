@@ -1,4 +1,4 @@
-const mostBlogs = require("../utils/list_helper.js.js").mostBlogs;
+const mostBlogs = require("../list_helper.js.js").mostBlogs;
 const { listWithManyBlogs, listWithOneBlog, emptyList } = require("./testdata");
 
 describe("mostBlogs", () => {

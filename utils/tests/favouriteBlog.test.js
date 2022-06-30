@@ -1,4 +1,4 @@
-const favouriteBlog = require("../utils/list_helper.js").favouriteBlog;
+const favouriteBlog = require("../list_helper.js").favouriteBlog;
 const { listWithManyBlogs, listWithOneBlog, emptyList } = require("./testdata");
 
 describe("totalLikes", () => {

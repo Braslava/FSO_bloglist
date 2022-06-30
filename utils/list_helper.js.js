@@ -37,9 +37,9 @@ const mostBlogs = (blogs) => {
     }
     // creates and object with {index: author} pairs 
     const authors = _.mapValues(blogs, "author");
-    console.log(authors);
+    //console.log(authors);
     const authorWithMostBlogs = _(authors).countBy().entries().maxBy(_.last);
-    console.log(authorWithMostBlogs);
+   // console.log(authorWithMostBlogs);
 
     return { author: authorWithMostBlogs[0], blogs: authorWithMostBlogs[1] };
 };

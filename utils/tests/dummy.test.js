@@ -1,4 +1,4 @@
-const dummy = require("../utils/list_helper.js").dummy;
+const dummy = require("../list_helper.js.js").dummy;
 
 describe("dummy", () => {
     test("returns 1", () => {
