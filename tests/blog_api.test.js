@@ -46,8 +46,6 @@ test("a specific blog is within the returned blogs", async () => {
 
     const titles = response.body.map((r) => r.title);
     expect(titles).toContain("Second blog");
-
-    // expect(response.body[0].title).toBe("First blog");
 });
 
 test("a valid blog can be added", async () => {
@@ -70,6 +68,11 @@ test("a valid blog can be added", async () => {
 
     expect(response.body).toHaveLength(initialBlogs.length + 1);
     expect(titles).toContain("Added blog");
+});
+
+test("returned blogs contain an id property", async () => {
+    const response = await api.get("/api/blogs");
+    response.body.forEach((blog) => expect(blog.id).toBeDefined());
 });
 
 afterAll(() => {
