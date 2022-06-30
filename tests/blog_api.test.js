@@ -68,7 +68,7 @@ test("a valid blog can be added", async () => {
 
     expect(response.body).toHaveLength(initialBlogs.length + 1);
     expect(titles).toContain("Added blog");
-});
+}, 10000);
 
 test("returned blogs contain an id property", async () => {
     const response = await api.get("/api/blogs");
