@@ -1,9 +1,2 @@
 GET http://localhost:3003/api/blogs
-content-type: application/json
-
-# {
-#     "title": "Title of the blog",
-#     "author": "String Surname",
-#     "url": "www.yayay.com",
-#     "likes": 2
-# }
+content-type: application/json 

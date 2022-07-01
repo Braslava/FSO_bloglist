@@ -75,6 +75,29 @@ test("returned blogs contain an id property", async () => {
     response.body.forEach((blog) => expect(blog.id).toBeDefined());
 });
 
+test("likes default to 0 if the new blog missing likes property", async () => {
+    const newBlog = {
+        title: "Added blog",
+        author: "Emily Orange",
+        url: "www.yayblog.com",
+    };
+
+    await api
+        .post("/api/blogs")
+        .send(newBlog)
+        .expect(201)
+        .expect("Content-Type", /application\/json/);
+
+    const response = await api.get("/api/blogs");
+
+    const addedBlog = response.body.find(
+        (blog) => blog.title === newBlog.title
+    );
+    expect(addedBlog.likes).toEqual(0);
+    // expect(response.body).toHaveLength(initialBlogs.length + 1);
+    // expect(titles).toContain("Added blog");
+}, 10000);
+
 afterAll(() => {
     mongoose.connection.close();
 });
