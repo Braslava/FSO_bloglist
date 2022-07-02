@@ -94,9 +94,31 @@ test("likes default to 0 if the new blog missing likes property", async () => {
         (blog) => blog.title === newBlog.title
     );
     expect(addedBlog.likes).toEqual(0);
-    // expect(response.body).toHaveLength(initialBlogs.length + 1);
-    // expect(titles).toContain("Added blog");
-}, 10000);
+});
+
+test("400 is returned if the new blog misses title", async () => {
+    const newBlog = {
+        author: "Emily Orange",
+        url: "www.yayblog.com",
+    };
+
+    await api
+        .post("/api/blogs")
+        .send(newBlog)
+        .expect(400)
+});
+
+test("400 is returned if the new blog misses url", async () => {
+    const newBlog = {
+        title: "How to be a cat?",
+        author: "Emily Orange",
+    };
+
+    await api
+        .post("/api/blogs")
+        .send(newBlog)
+        .expect(400)
+});
 
 afterAll(() => {
     mongoose.connection.close();
