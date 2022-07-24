@@ -15,20 +15,20 @@ const initialBlogs = [
     },
 ];
 
-const initialUsers = [
-    {
-        username: "TestUser1",
-        name: "TestName1",
-        blogs: [],
-        id: "62dd329f466d1471bc719a8b",
-    },
-    {
-        username: "TestUser2",
-        name: "TestName2",
-        blogs: [],
-        id: "62dd339c9b199e552c672a81",
-    },
-];
+// const initialUsers = [
+//     {
+//         username: "TestUser1",
+//         name: "TestName1",
+//         blogs: [],
+//         id: "62dd329f466d1471bc719a8b",
+//     },
+//     {
+//         username: "TestUser2",
+//         name: "TestName2",
+//         blogs: [],
+//         id: "62dd339c9b199e552c672a81",
+//     },
+// ];
 
 const nonExistingId = async () => {
     const blog = new Blog({
@@ -50,7 +50,7 @@ const blogsInDb = async () => {
 
 module.exports = {
     initialBlogs,
-    initialUsers,
+    // initialUsers,
     nonExistingId,
     blogsInDb,
 };

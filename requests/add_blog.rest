@@ -2,7 +2,8 @@ POST http://localhost:3003/api/blogs
 content-type: application/json
 
 {
-    "title": "Title of the blog",
-    "author": "String Surname",
-    "url": "www.yayay.com"
+    "title": "Added blog 3",
+    "author": "Anne Apple",
+    "url": "www.yayay.com", 
+    "userId": "62dd87bb30428758a5c79e1e"
 }

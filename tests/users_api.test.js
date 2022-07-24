@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const supertest = require("supertest");
+const bcrypt = require("bcrypt");
 const app = require("../app");
 const User = require("../models/user");
 const helpers = require("./test_helpers");
@@ -8,8 +9,15 @@ const api = supertest(app);
 
 beforeEach(async () => {
     await User.deleteMany({});
-    await User.insertMany(helpers.initialUsers);
+    const passwordHash1 = await bcrypt.hash("sekret", 10);
+    const user1 = new User({ username: "testuser1", passwordHash1 });
+    await user1.save();
+    const passwordHash2 = await bcrypt.hash("sekret", 10);
+    const user2 = new User({ username: "testuser2", passwordHash2 });
+    await user2.save();
 });
+
+const USER_COUNT = 2;
 
 describe("when there are initially some users saved", () => {
     test("users are returned as json", async () => {
@@ -22,14 +30,14 @@ describe("when there are initially some users saved", () => {
     test("all users are returned", async () => {
         const response = await api.get("/api/users");
 
-        expect(response.body).toHaveLength(helpers.initialUsers.length);
+        expect(response.body).toHaveLength(2);
     });
 
     test("a specific user is within the returned users", async () => {
         const response = await api.get("/api/users");
 
         const usernames = response.body.map((r) => r.username);
-        expect(usernames).toContain("TestUser2");
+        expect(usernames).toContain("testuser1");
     });
 
     test("returned users contain an id property", async () => {
@@ -88,7 +96,7 @@ describe("adding a new user", () => {
         // console.log("post response", response);
         const usernames = response.body.map((r) => r.username);
         console.log("post usernames", response.body);
-        expect(response.body).toHaveLength(helpers.initialUsers.length + 1);
+        expect(response.body).toHaveLength(USER_COUNT + 1);
         expect(usernames).toContain("Added user");
     }, 10000);
 
