@@ -9,10 +9,6 @@ const api = supertest(app);
 beforeEach(async () => {
     await Blog.deleteMany({});
     await Blog.insertMany(helpers.initialBlogs);
-    // let blogObject = new Blog(initialBlogs[0]);
-    // await blogObject.save();
-    // blogObject = new Blog(initialBlogs[1]);
-    // await blogObject.save();
 });
 
 describe("when there are initially some blogs saved", () => {
@@ -192,6 +188,6 @@ describe("update blog", () => {
     });
 });
 
-afterAll(() => {
-    mongoose.connection.close();
-});
+// afterAll(() => {
+//     mongoose.connection.close();
+// });
