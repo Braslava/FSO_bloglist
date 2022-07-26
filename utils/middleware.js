@@ -22,6 +22,11 @@ const tokenExtractor = (request, response, next) => {
 };
 
 const userExtracor = async (request, response, next) => {
+    console.log(request.method);
+    if (request.method === "GET") {
+        next();
+        return;
+    }
     const decodedToken = jwt.verify(request.token, process.env.SECRET);
     if (!decodedToken.id) {
         return response.status(401).json({ error: "token missing or invalid" });
