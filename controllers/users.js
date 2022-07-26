@@ -5,11 +5,6 @@ const { nonExistingId } = require("../tests/test_helpers");
 
 usersRouter.post("/", async (request, response) => {
     const { username, name, password } = request.body;
-
-    console.log("username", username);
-    console.log("name", name);
-    console.log("password", password);
-
     if (!username || !password || password.length < 3 || username.length < 3) {
         return response.status(400).json({
             error: "username and passowrd are required and must be at least 3 characters long",
@@ -34,7 +29,6 @@ usersRouter.post("/", async (request, response) => {
 
     try {
         const savedUser = await user.save();
-        console.log(savedUser);
         response.status(201).json(savedUser);
     } catch (exception) {
         nonExistingId(exception);
@@ -43,7 +37,6 @@ usersRouter.post("/", async (request, response) => {
 
 usersRouter.get("/", async (request, response) => {
     const users = await User.find({}).populate("blogs");
-    console.log(users);
     response.json(users);
 });
 module.exports = usersRouter;
