@@ -3,14 +3,6 @@ const Blog = require("../models/blog");
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 
-// const getTokenFrom = (request) => {
-//     const authorization = request.get("authorization");
-//     if (authorization && authorization.toLowerCase().startsWith("bearer ")) {
-//         return authorization.substring(7);
-//     }
-//     return null;
-// };
-
 blogsRouter.get("/", async (request, response) => {
     const blogs = await Blog.find({});
     console.log(blogs);
@@ -31,17 +23,16 @@ blogsRouter.get("/:id", async (request, response) => {
 });
 
 blogsRouter.post("/", async (request, response) => {
-    const token = getTokenFrom(request);
-    //const decodedToken = jwt.verify(token, process.env.SECRET);
-    const decodedToken = jwt.verify(request.token, process.env.SECRET)
-    if (!decodedToken.id) {
-        return response.status(401).json({ error: "token missing or invalid" });
-    }
-    const user = await User.findById(decodedToken.id);
+    // const decodedToken = jwt.verify(request.token, process.env.SECRET);
+    // if (!decodedToken.id) {
+    //     return response.status(401).json({ error: "token missing or invalid" });
+    // }
+    //const user = await User.findById(decodedToken.id);
+    const user = request.user;
     // const user = await User.findById(request.body.userId);
     console.log(user);
     const blog = new Blog({ ...request.body, user: user?._id });
-    // console.log(request.body);
+
     if (!request.body.likes) {
         blog.likes = 0;
     }
@@ -58,9 +49,31 @@ blogsRouter.post("/", async (request, response) => {
 });
 
 blogsRouter.delete("/:id", async (request, response, next) => {
+    // const decodedToken = jwt.verify(request.token, process.env.SECRET);
+    // if (!decodedToken.id) {
+    //     return response.status(401).json({ error: "token missing or invalid" });
+    // }
+    // const user = await User.findById(decodedToken.id);
+    const user = request.user;
+    // console.log("user is", user);
+    const idToDelete = request.params.id;
+    // console.log(request.params.id);
+
     try {
-        await Blog.findByIdAndRemove(request.params.id);
-        response.status(204).end();
+        const blog = await Blog.findById(idToDelete).populate("user", {
+            username: 1,
+            name: 1,
+        });
+        // console.log("blog to delete", blog);
+        // console.log("user from token", user.id.toString());
+        // console.log("blog user", blog?.user._id.toString());
+
+        if (blog?.user._id.toString() === user.id.toString()) {
+            await Blog.findByIdAndRemove(idToDelete);
+            response.status(204).end();
+        } else {
+            response.status(401).json({ error: "unauthorized" });
+        }
     } catch (error) {
         next(error);
     }

@@ -1,9 +1,10 @@
 POST http://localhost:3003/api/blogs
 content-type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRvbW15IiwiaWQiOiI2MmRkOTQ1OGVmZTlhMmI3ZjJiMDdjYjQiLCJpYXQiOjE2NTg4NjE1MjEsImV4cCI6MTY1ODg2NTEyMX0.uDIPu9lxM9rFlK5Bx_l8mgXpyXZOuAWNhbb28F9x68Q
 
 {
-    "title": "Added blog 3",
-    "author": "Anne Apple",
+    "title": "New blog",
+    "author": "Tommy",
     "url": "www.yayay.com", 
-    "userId": "62dd87bb30428758a5c79e1e"
+    "userId": "62dd9458efe9a2b7f2b07cb4"
 }
