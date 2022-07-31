@@ -1,7 +1,10 @@
 const mongoose = require("mongoose");
 const supertest = require("supertest");
+const bcrypt = require("bcrypt");
+
 const app = require("../app");
 const Blog = require("../models/blog");
+const User = require("../models/user");
 const helpers = require("./test_helpers");
 
 const api = supertest(app);
@@ -71,6 +74,22 @@ describe("viewing a specific blog", () => {
 });
 
 describe("adding a new blog", () => {
+    let token;
+    beforeEach(async () => {
+        await User.deleteMany({});
+
+        const passwordHash = await bcrypt.hash("secret", 10);
+        const user = new User({ username: "root", passwordHash });
+
+        await user.save();
+
+        const response = await api
+            .post("/api/login")
+            .send({ username: "root", password: "secret" });
+
+        token = response.body.token;
+    });
+
     test("a valid blog can be added", async () => {
         const newBlog = {
             title: "Added blog",
@@ -82,6 +101,7 @@ describe("adding a new blog", () => {
         await api
             .post("/api/blogs")
             .send(newBlog)
+            .set("Authorization", `bearer ${token}`)
             .expect(201)
             .expect("Content-Type", /application\/json/);
 
@@ -103,6 +123,7 @@ describe("adding a new blog", () => {
         await api
             .post("/api/blogs")
             .send(newBlog)
+            .set("Authorization", `bearer ${token}`)
             .expect(201)
             .expect("Content-Type", /application\/json/);
 
@@ -121,7 +142,11 @@ describe("adding a new blog", () => {
             url: "www.yayblog.com",
         };
 
-        await api.post("/api/blogs").send(newBlog).expect(400);
+        await api
+            .post("/api/blogs")
+            .send(newBlog)
+            .set("Authorization", `bearer ${token}`)
+            .expect(400);
     });
 
     test("400 is returned if the new blog misses url", async () => {
@@ -131,15 +156,38 @@ describe("adding a new blog", () => {
             likes: 23,
         };
 
-        await api.post("/api/blogs").send(newBlog).expect(400);
+        await api
+            .post("/api/blogs")
+            .send(newBlog)
+            .set("Authorization", `bearer ${token}`)
+            .expect(400);
     });
 });
 
 describe("delete blog", () => {
+    let token;
+    beforeEach(async () => {
+        await User.deleteMany({});
+
+        const passwordHash = await bcrypt.hash("secret", 10);
+        const user = new User({ username: "root", passwordHash });
+
+        await user.save();
+
+        const response = await api
+            .post("/api/login")
+            .send({ username: "root", password: "secret" });
+
+        token = response.body.token;
+    });
+
     test("succeeds with status code 204 if id exists", async () => {
         const blogsAtStart = await helpers.blogsInDb();
         const blogToDelete = blogsAtStart[0];
-        await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204);
+        await api
+            .delete(`/api/blogs/${blogToDelete.id}`)
+            .set("Authorization", `bearer ${token}`)
+            .expect(204);
 
         const blogsAfterDeletion = await helpers.blogsInDb();
         expect(blogsAfterDeletion).toHaveLength(
@@ -153,11 +201,29 @@ describe("delete blog", () => {
 
     test("400 returned if id does not exist", async () => {
         const nonExistingId = helpers.nonExistingId();
-        await api.delete(`/api/blogs/${nonExistingId}`).expect(400);
+        await api
+            .delete(`/api/blogs/${nonExistingId}`)
+            .set("Authorization", `bearer ${token}`)
+            .expect(400);
     });
 });
 
 describe("update blog", () => {
+    let token;
+    beforeEach(async () => {
+        await User.deleteMany({});
+
+        const passwordHash = await bcrypt.hash("secret", 10);
+        const user = new User({ username: "root", passwordHash });
+
+        await user.save();
+
+        const response = await api
+            .post("/api/login")
+            .send({ username: "root", password: "secret" });
+
+        token = response.body.token;
+    });
     test("updates likes if id exists", async () => {
         const blogsAtStart = await helpers.blogsInDb();
         console.log(blogsAtStart[0].likes);
@@ -170,6 +236,7 @@ describe("update blog", () => {
         const updatedBlogResponse = await api
             .put(`/api/blogs/${blogToUpdate.id}`)
             .send(blogToUpdate)
+            .set("Authorization", `bearer ${token}`)
             .expect(200);
 
         console.log("Updated", updatedBlogResponse.body);
@@ -184,10 +251,11 @@ describe("update blog", () => {
                 author: "Updated Author",
                 url: "www.fakeupdate.com",
             })
+            .set("Authorization", `bearer ${token}`)
             .expect(400);
     });
 });
 
-// afterAll(() => {
+// afterAll(async () => {
 //     mongoose.connection.close();
 // });

@@ -2,7 +2,7 @@ const blogsRouter = require("express").Router();
 const Blog = require("../models/blog");
 
 blogsRouter.get("/", async (request, response) => {
-    console.log(request.method);
+    // console.log(request.method);
     const blogs = await Blog.find({});
     response.json(blogs);
 });
@@ -21,7 +21,7 @@ blogsRouter.get("/:id", async (request, response) => {
 
 blogsRouter.post("/", async (request, response) => {
     const user = request.user;
-    console.log(user);
+    //console.log(user);
     const blog = new Blog({ ...request.body, user: user?._id });
 
     if (!request.body.likes) {
@@ -60,8 +60,10 @@ blogsRouter.delete("/:id", async (request, response, next) => {
 });
 
 blogsRouter.put("/:id", async (request, response, next) => {
+    const user = request.user;
+    const idToUpdate = request.params.id;
     const body = request.body;
-    console.log("new likes", body.likes);
+    // console.log("new likes", body.likes);
 
     const blog = {
         title: body.title,
@@ -69,16 +71,23 @@ blogsRouter.put("/:id", async (request, response, next) => {
         url: body.url,
         likes: body.likes,
     };
-    console.log("new blog", blog);
-
+    // console.log("new blog", blog);
     try {
-        const updatedBlog = await Blog.findByIdAndUpdate(
-            request.params.id,
-            blog,
-            { new: true }
-        );
-        console.log("updated in backend", updatedBlog);
-        response.json(updatedBlog);
+        const oldBlog = await Blog.findById(idToDelete).populate("user", {
+            username: 1,
+            name: 1,
+        });
+        if (oldBlog?.user._id.toString() === user.id.toString()) {
+            const updatedBlog = await Blog.findByIdAndUpdate(
+                request.params.id,
+                blog,
+                { new: true }
+            );
+            console.log("updated in backend", updatedBlog);
+            response.json(updatedBlog);
+        } else {
+            response.status(401).json({ error: "unauthorized" });
+        }
     } catch (error) {
         next(error);
     }

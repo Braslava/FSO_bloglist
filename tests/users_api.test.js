@@ -136,59 +136,6 @@ describe("adding a new user", () => {
     });
 });
 
-// describe("delete blog", () => {
-//     test("succeeds with status code 204 if id exists", async () => {
-//         const blogsAtStart = await helpers.blogsInDb();
-//         const blogToDelete = blogsAtStart[0];
-//         await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204);
-
-//         const blogsAfterDeletion = await helpers.blogsInDb();
-//         expect(blogsAfterDeletion).toHaveLength(
-//             helpers.initialBlogs.length - 1
-//         );
-//         // array of blog ids after deletion should not include the deleted blog id
-//         expect(blogsAfterDeletion.map((blog) => blog.id)).not.toContain(
-//             blogToDelete.id
-//         );
-//     });
-
-//     test("400 returned if id does not exist", async () => {
-//         const nonExistingId = helpers.nonExistingId();
-//         await api.delete(`/api/blogs/${nonExistingId}`).expect(400);
-//     });
-// });
-
-// describe("update blog", () => {
-//     test("updates likes if id exists", async () => {
-//         const blogsAtStart = await helpers.blogsInDb();
-//         console.log(blogsAtStart[0].likes);
-//         const blogToUpdate = {
-//             ...blogsAtStart[0],
-//             likes: blogsAtStart[0].likes + 1,
-//         };
-//         console.log("Blog to update", blogToUpdate);
-
-//         const updatedBlogResponse = await api
-//             .put(`/api/blogs/${blogToUpdate.id}`)
-//             .send(blogToUpdate)
-//             .expect(200);
-
-//         console.log("Updated", updatedBlogResponse.body);
-//         expect(updatedBlogResponse.body).toEqual(blogToUpdate);
-//     });
-
-//     test("400 returned if id does not exist", async () => {
-//         const nonExistingId = helpers.nonExistingId();
-//         await api
-//             .put(`/api/blogs/${nonExistingId}`, {
-//                 title: "Updated Title",
-//                 author: "Updated Author",
-//                 url: "www.fakeupdate.com",
-//             })
-//             .expect(400);
-//     });
-// });
-
 afterAll(() => {
     mongoose.connection.close();
 });
