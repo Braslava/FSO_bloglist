@@ -12,7 +12,7 @@ const App = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [user, setUser] = useState(null);
-    const [errorMessage, setErrorMessage] = useState(null);
+    const [notificationText, setNotificationText] = useState(null);
 
     useEffect(() => {
         const loggedUserJSON =
@@ -23,6 +23,13 @@ const App = () => {
             blogService.setToken(user.token);
         }
     }, []);
+
+    const onNotificationChnage = (message) => {
+        setNotificationText(message);
+        setTimeout(() => {
+            setNotificationText(null);
+        }, 5000);
+    };
 
     const handleLogin = async (event) => {
         event.preventDefault();
@@ -41,10 +48,7 @@ const App = () => {
             setUsername("");
             setPassword("");
         } catch (exception) {
-            setErrorMessage("Wrong credentials");
-            setTimeout(() => {
-                setErrorMessage(null);
-            }, 5000);
+            onNotificationChnage("Wrong credentials");
         }
     };
 
@@ -60,7 +64,7 @@ const App = () => {
     return (
         <div style={{ padding: 40, fontSize: "18px" }}>
             <h1>BLOGLIST APP</h1>
-            <Notification notificationText={errorMessage} />
+            <Notification notification={notificationText} />
             {!user && (
                 <LoginForm
                     username={username}
@@ -78,6 +82,7 @@ const App = () => {
                         onAddNewBlog={(newBlog) =>
                             setBlogs((prevblogs) => [...prevblogs, newBlog])
                         }
+                        createNotification={onNotificationChnage}
                     />
                     <BlogsDisplay blogs={blogs} />
                 </>

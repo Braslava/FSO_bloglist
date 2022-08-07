@@ -1,7 +1,7 @@
 import { useState } from "react";
 import blogService from "../../services/blogs";
 
-const AddBlogForm = ({onAddNewBlog}) => {
+const AddBlogForm = ({ onAddNewBlog, createNotification }) => {
     const [title, setTitle] = useState("");
     const [author, setAuthor] = useState("");
     const [url, setUrl] = useState("");
@@ -17,10 +17,14 @@ const AddBlogForm = ({onAddNewBlog}) => {
             };
             console.log(newBlogObject);
             const response = await blogService.create(newBlogObject);
-            onAddNewBlog();
+            onAddNewBlog(newBlogObject);
+            createNotification(
+                `Added blog ${newBlogObject.title} by ${newBlogObject.author}`
+            );
             return response;
         } catch (error) {
             console.log(error);
+            createNotification(error);
         }
     };
 
