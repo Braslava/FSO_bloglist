@@ -21,7 +21,7 @@ blogsRouter.get("/:id", async (request, response) => {
 
 blogsRouter.post("/", async (request, response) => {
     const user = request.user;
-    //console.log(user);
+    console.log(user, "initial blog author");
     const blog = new Blog({ ...request.body, user: user?._id });
     try {
         if (!request.body.likes) {
@@ -45,18 +45,20 @@ blogsRouter.post("/", async (request, response) => {
 blogsRouter.delete("/:id", async (request, response, next) => {
     const user = request.user;
     const idToDelete = request.params.id;
+    console.log("**** USER **** ", request.user);
 
     try {
         const blog = await Blog.findById(idToDelete).populate("user", {
             username: 1,
             name: 1,
         });
-        if (blog?.user._id.toString() === user.id.toString()) {
-            await Blog.findByIdAndRemove(idToDelete);
-            response.status(204).end();
-        } else {
-            response.status(401).json({ error: "unauthorized" });
-        }
+        // if (blog?.user._id.toString() === user.id.toString()) {
+        await Blog.findByIdAndRemove(idToDelete);
+        console.log(idToDelete, "id to delete");
+        response.status(204).end();
+        // } else {
+        //     response.status(401).json({ error: "unauthorized" });
+        // }
     } catch (error) {
         next(error);
     }
@@ -66,31 +68,34 @@ blogsRouter.put("/:id", async (request, response, next) => {
     const user = request.user;
     const idToUpdate = request.params.id;
     const body = request.body;
-    // console.log("new likes", body.likes);
+    console.log("new likes", body.likes);
+    console.log("**** USER **** ", request.user);
 
     const blog = {
         title: body.title,
         author: body.author,
         url: body.url,
         likes: body.likes,
+        // user,
     };
     // console.log("new blog", blog);
     try {
-        const oldBlog = await Blog.findById(idToDelete).populate("user", {
+        const oldBlog = await Blog.findById(idToUpdate).populate("user", {
             username: 1,
             name: 1,
         });
-        if (oldBlog?.user._id.toString() === user.id.toString()) {
-            const updatedBlog = await Blog.findByIdAndUpdate(
-                request.params.id,
-                blog,
-                { new: true }
-            );
-            console.log("updated in backend", updatedBlog);
-            response.json(updatedBlog);
-        } else {
-            response.status(401).json({ error: "unauthorized" });
-        }
+        console.log("***old blog****", oldBlog);
+        // if (oldBlog?.user?._id.toString() === user.id.toString()) {
+        const updatedBlog = await Blog.findByIdAndUpdate(
+            request.params.id,
+            blog,
+            { new: true }
+        );
+        console.log("updated in backend", updatedBlog);
+        response.json(updatedBlog);
+        // } else {
+        //     response.status(401).json({ error: "unauthorized" });
+        // }
     } catch (error) {
         next(error);
     }

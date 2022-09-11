@@ -9,7 +9,22 @@ const helpers = require("./test_helpers");
 
 const api = supertest(app);
 
+let token;
+
 beforeEach(async () => {
+    await User.deleteMany({});
+
+    const passwordHash = await bcrypt.hash("secret", 10);
+    const user = new User({ username: "root", passwordHash });
+
+    await user.save();
+
+    const response = await api
+        .post("/api/login")
+        .send({ username: "root", password: "secret" });
+
+    token = response.body.token;
+
     await Blog.deleteMany({});
     await Blog.insertMany(helpers.initialBlogs);
 });
@@ -74,21 +89,21 @@ describe("viewing a specific blog", () => {
 });
 
 describe("adding a new blog", () => {
-    let token;
-    beforeEach(async () => {
-        await User.deleteMany({});
+    // let token;
+    // beforeEach(async () => {
+    //     await User.deleteMany({});
 
-        const passwordHash = await bcrypt.hash("secret", 10);
-        const user = new User({ username: "root", passwordHash });
+    //     const passwordHash = await bcrypt.hash("secret", 10);
+    //     const user = new User({ username: "root", passwordHash });
 
-        await user.save();
+    //     await user.save();
 
-        const response = await api
-            .post("/api/login")
-            .send({ username: "root", password: "secret" });
+    //     const response = await api
+    //         .post("/api/login")
+    //         .send({ username: "root", password: "secret" });
 
-        token = response.body.token;
-    });
+    //     token = response.body.token;
+    // });
 
     test("a valid blog can be added", async () => {
         const newBlog = {
@@ -165,24 +180,26 @@ describe("adding a new blog", () => {
 });
 
 describe("delete blog", () => {
-    let token;
-    beforeEach(async () => {
-        await User.deleteMany({});
+    // let token;
+    // beforeEach(async () => {
+    //     await User.deleteMany({});
 
-        const passwordHash = await bcrypt.hash("secret", 10);
-        const user = new User({ username: "root", passwordHash });
+    //     const passwordHash = await bcrypt.hash("secret", 10);
+    //     const user = new User({ username: "root", passwordHash });
 
-        await user.save();
+    //     await user.save();
 
-        const response = await api
-            .post("/api/login")
-            .send({ username: "root", password: "secret" });
+    //     const response = await api
+    //         .post("/api/login")
+    //         .send({ username: "root", password: "secret" });
 
-        token = response.body.token;
-    });
+    //     token = response.body.token;
+    //     console.log("delete user", user);
+    // });
 
     test("succeeds with status code 204 if id exists", async () => {
         const blogsAtStart = await helpers.blogsInDb();
+        console.log("blogs at deletion", blogsAtStart);
         const blogToDelete = blogsAtStart[0];
         await api
             .delete(`/api/blogs/${blogToDelete.id}`)
@@ -209,21 +226,22 @@ describe("delete blog", () => {
 });
 
 describe("update blog", () => {
-    let token;
-    beforeEach(async () => {
-        await User.deleteMany({});
+    // let token;
+    // beforeEach(async () => {
+    //     await User.deleteMany({});
 
-        const passwordHash = await bcrypt.hash("secret", 10);
-        const user = new User({ username: "root", passwordHash });
+    //     const passwordHash = await bcrypt.hash("secret", 10);
+    //     const user = new User({ username: "root", passwordHash });
 
-        await user.save();
+    //     await user.save();
 
-        const response = await api
-            .post("/api/login")
-            .send({ username: "root", password: "secret" });
+    //     const response = await api
+    //         .post("/api/login")
+    //         .send({ username: "root", password: "secret" });
 
-        token = response.body.token;
-    });
+    //     token = response.body.token;
+    //     console.log("update token", token);
+    // });
     test("updates likes if id exists", async () => {
         const blogsAtStart = await helpers.blogsInDb();
         console.log(blogsAtStart[0].likes);
@@ -256,6 +274,6 @@ describe("update blog", () => {
     });
 });
 
-// afterAll(async () => {
-//     mongoose.connection.close();
-// });
+afterAll(() => {
+    mongoose.connection.close();
+});

@@ -1,14 +1,25 @@
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+
 import Blog from "../Blog/Blog";
 
-const BlogsDisplay = ({ blogs }) => {
+const BlogsDisplay = ({ blogs, onBlogStateChange }) => {
+    const sortedBlogs = blogs.sort((a, b) => b.likes - a.likes);
+    // items.sort((a, b) => a.value - b.value);
     return (
-        <section>
-            <h2>blogs</h2>
+        <Box sx={{ mt: 6 }}>
+            <Typography variant="h2" gutterBottom>
+                Blogs
+            </Typography>
             {console.log(blogs)}
-            {blogs.map((blog) => (
-                <Blog key={blog.title} blog={blog} />
+            {sortedBlogs.map((blog) => (
+                <Blog
+                    key={blog.title}
+                    blog={blog}
+                    onBlogStateChange={onBlogStateChange}
+                />
             ))}
-        </section>
+        </Box>
     );
 };
 

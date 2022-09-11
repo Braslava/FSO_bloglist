@@ -1,18 +1,26 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import LoginForm from "./components/LoginForm/LoginForm";
 import BlogsDisplay from "./components/BlogsDisplay/BlogDisplay";
 import Notification from "./components/Notification/Notification";
 import AddBlogForm from "./components/AddBlogForm/AddBlogForm";
+import Togglable from "./components/Togglable/Togglable";
+
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
 
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 
 const App = () => {
     const [blogs, setBlogs] = useState([]);
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
     const [user, setUser] = useState(null);
     const [notificationText, setNotificationText] = useState(null);
+
+    const addBlogFormRef = useRef();
+    const getBlogs = () => {
+        blogService.getAll().then((blogs) => setBlogs(blogs));
+    }
 
     useEffect(() => {
         const loggedUserJSON =
@@ -24,6 +32,10 @@ const App = () => {
         }
     }, []);
 
+    useEffect(() => {
+        getBlogs();
+    }, []);
+
     const onNotificationChnage = (message) => {
         setNotificationText(message);
         setTimeout(() => {
@@ -31,22 +43,20 @@ const App = () => {
         }, 5000);
     };
 
-    const handleLogin = async (event) => {
-        event.preventDefault();
-
+    const handleLogin = async (username, password) => {
+        console.log(username, password);
         try {
             const user = await loginService.login({
                 username,
                 password,
             });
+            console.log(user);
             window.localStorage.setItem(
                 "loggedBlogListUser",
                 JSON.stringify(user)
             );
             blogService.setToken(user.token);
             setUser(user);
-            setUsername("");
-            setPassword("");
         } catch (exception) {
             onNotificationChnage("Wrong credentials");
         }
@@ -57,37 +67,42 @@ const App = () => {
         window.location.reload();
     };
 
-    useEffect(() => {
-        blogService.getAll().then((blogs) => setBlogs(blogs));
-    }, []);
+    const updateBlogs = () => {
+        getBlogs();
+    };
+
 
     return (
-        <div style={{ padding: 40, fontSize: "18px" }}>
-            <h1>BLOGLIST APP</h1>
+        <Box sx={{ padding: 6, fontSize: "18px" }}>
+            <Typography variant="h1" gutterBottom>
+                Bloglist App
+            </Typography>
             <Notification notification={notificationText} />
-            {!user && (
-                <LoginForm
-                    username={username}
-                    setUsername={setUsername}
-                    handleLogin={handleLogin}
-                    password={password}
-                    setPassword={setPassword}
-                />
-            )}
+            {!user && <LoginForm handleLogin={handleLogin} />}
             {user && (
                 <>
-                    <p>Welcome back {user.name}</p>
-                    <button onClick={handleLogOut}>Log Out</button>
-                    <AddBlogForm
-                        onAddNewBlog={(newBlog) =>
-                            setBlogs((prevblogs) => [...prevblogs, newBlog])
-                        }
-                        createNotification={onNotificationChnage}
+                    <Box sx={{ mb: 6 }}>
+                        <p>Welcome back {user.name}</p>
+                        <Button onClick={handleLogOut} variant="contained">
+                            Log Out
+                        </Button>
+                    </Box>
+                    <Togglable buttonLabel="Add Blog" ref={addBlogFormRef}>
+                        <AddBlogForm
+                            onAddNewBlog={(newBlog) => {
+                                addBlogFormRef.current.toggleVisibility();
+                                updateBlogs();
+                            }}
+                            createNotification={onNotificationChnage}
+                        />
+                    </Togglable>
+                    <BlogsDisplay
+                        blogs={blogs}
+                        onBlogStateChange={updateBlogs}
                     />
-                    <BlogsDisplay blogs={blogs} />
                 </>
             )}
-        </div>
+        </Box>
     );
 };
 

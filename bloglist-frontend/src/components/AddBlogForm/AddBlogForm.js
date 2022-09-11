@@ -1,4 +1,10 @@
 import { useState } from "react";
+
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
+import Stack from "@mui/material/Stack";
+
 import blogService from "../../services/blogs";
 
 const AddBlogForm = ({ onAddNewBlog, createNotification }) => {
@@ -24,20 +30,33 @@ const AddBlogForm = ({ onAddNewBlog, createNotification }) => {
             return response;
         } catch (error) {
             console.log(error);
-            createNotification(error);
+            createNotification(error.message);
         }
     };
 
     return (
-        <section>
-            <h2>Add a new blog</h2>
-            <form
-                onSubmit={handleCreateBlog}
-                style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    maxWidth: "300px",
+        <Box
+            sx={{
+                "& > :not(style)": {
+                    margin: "35px 0",
+                },
+            }}
+        >
+            <Typography variant="h3">Add a new blog</Typography>
+
+            <Stack
+                noValidate
+                autoComplete="off"
+                component="form"
+                spacing={1}
+                sx={{
+                    "& > :not(style)": {
+                        width: "35ch",
+                        display: "flex",
+                        flexDirection: "column",
+                    },
                 }}
+                onSubmit={handleCreateBlog}
             >
                 <label htmlFor="title">
                     Title
@@ -69,9 +88,13 @@ const AddBlogForm = ({ onAddNewBlog, createNotification }) => {
                         onChange={({ target }) => setUrl(target.value)}
                     />
                 </label>
-                <button type="submit">Add a blog</button>
-            </form>
-        </section>
+                <Box>
+                    <Button variant="contained" type="submit" color="secondary">
+                        Add a blog
+                    </Button>
+                </Box>
+            </Stack>
+        </Box>
     );
 };
 

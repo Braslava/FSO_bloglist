@@ -22,7 +22,6 @@ const tokenExtractor = (request, response, next) => {
 };
 
 const userExtracor = async (request, response, next) => {
-    console.log(request.method);
     if (request.method === "GET") {
         next();
         return;
@@ -33,6 +32,7 @@ const userExtracor = async (request, response, next) => {
     }
     const user = await User.findById(decodedToken.id);
     request.user = user || null;
+    console.log("***user by middleware***", user);
     next();
 };
 
