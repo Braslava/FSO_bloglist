@@ -1,4 +1,5 @@
 import { useState } from "react";
+import PropTypes from "prop-types";
 
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
@@ -53,6 +54,10 @@ const LoginForm = ({ handleLogin }) => {
             </Stack>
         </Box>
     );
+};
+
+LoginForm.propTypes = {
+    handleLogin: PropTypes.func.isRequired,
 };
 
 export default LoginForm;

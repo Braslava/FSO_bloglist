@@ -1,4 +1,5 @@
 import { useState, forwardRef, useImperativeHandle } from "react";
+import PropTypes from "prop-types";
 
 import Button from "@mui/material/Button";
 
@@ -34,5 +35,11 @@ const Togglable = forwardRef((props, refs) => {
         </div>
     );
 });
+
+Togglable.displayName = "Togglable";
+
+Togglable.propTypes = {
+    buttonLabel: PropTypes.string.isRequired,
+};
 
 export default Togglable;
